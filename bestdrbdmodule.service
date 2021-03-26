@@ -1,0 +1,9 @@
+[Unit]
+Description=Best DRBD Module As A Service
+After=network.target
+
+[Service]
+ExecStart=/usr/sbin/bestdrbdmodule -addr ":3030"
+
+[Install]
+WantedBy=multi-user.target

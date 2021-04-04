@@ -74,6 +74,4 @@ func (rs *repos) getKmps(repo, dist, arch string) []string {
 	default:
 		return []string{}
 	}
-
-	return []string{}
 }

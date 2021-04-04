@@ -124,7 +124,10 @@ func (s *server) bestKmod() http.HandlerFunc {
 		// BUT for kmod in this context we don't care about the centos dot release, so we actually can use
 		// their broken os-release and then use disttool with a forced version
 		h := sha256.New()
-		h.Write([]byte(kernelRelease))
+		if _, err := h.Write([]byte(kernelRelease)); err != nil {
+			s.errorf(http.StatusInternalServerError, r.RemoteAddr, w, "Could not hash input line")
+			return
+		}
 		dist, major := "", ""
 		scanner := bufio.NewScanner(r.Body)
 		for scanner.Scan() {
@@ -132,7 +135,10 @@ func (s *server) bestKmod() http.HandlerFunc {
 
 			// hash early/everything
 			// do not break out of this loop
-			h.Write([]byte(text))
+			if _, err := h.Write([]byte(text)); err != nil {
+				s.errorf(http.StatusInternalServerError, r.RemoteAddr, w, "Could not hash input line")
+				return
+			}
 
 			text = strings.TrimSpace(text)
 			if strings.HasPrefix(text, "#") {
@@ -280,11 +286,11 @@ func (s *server) _setKmodCache(dist string, hSum [32]byte, value string) {
 	s.kmodCache[dist][hSum] = value
 }
 
-func (s *server) setKmodCache(dist string, hSum [32]byte, value string) {
-	s.m.Lock()
-	s._setKmodCache(dist, hSum, value)
-	s.m.Unlock()
-}
+// func (s *server) setKmodCache(dist string, hSum [32]byte, value string) {
+// s.m.Lock()
+// s._setKmodCache(dist, hSum, value)
+// s.m.Unlock()
+// }
 
 func (s *server) errorf(code int, remoteAddr string, w http.ResponseWriter, format string, a ...interface{}) {
 	w.WriteHeader(code)

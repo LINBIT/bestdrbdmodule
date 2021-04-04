@@ -42,19 +42,31 @@ func WithHTTPClient(httpClient *http.Client) Option {
 	}
 }
 
-func NewClient(options ...Option) *Client {
+func NewClient(options ...Option) (*Client, error) {
 	parsedBaseURL, err := url.Parse(defaultBaseURL)
 	if err != nil {
-		// since this is the hard coded default, panic when it is invalid
-		panic(fmt.Sprintf("default base URL not valid: %v", err))
+		return nil, err
 	}
+
 	cli := &Client{
 		baseURL:       parsedBaseURL,
 		osReleasePath: defaultOsReleasePath,
 		httpClient:    &http.Client{},
 	}
+
 	for _, o := range options {
-		o(cli)
+		if err := o(cli); err != nil {
+			return nil, err
+		}
+	}
+
+	return cli, nil
+}
+
+func NewClientMust(options ...Option) *Client {
+	cli, err := NewClient(options...)
+	if err != nil {
+		panic(err)
 	}
 
 	return cli

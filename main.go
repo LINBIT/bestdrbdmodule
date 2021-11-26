@@ -168,7 +168,7 @@ func (s *server) bestKmod() http.HandlerFunc {
 		hSum := sha256.Sum256(h.Sum(nil))
 
 		// mappings
-		if dist == "centos" {
+		if dist == "centos" || dist == "almalinux" || dist == "rocky" {
 			dist = "rhel"
 		}
 

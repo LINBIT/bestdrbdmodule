@@ -24,7 +24,7 @@ const pkgUrl = "https://packages.linbit.com/yum/index.kmp.json"
 var (
 	flagAddr         = flag.String("addr", ":8080", "Server address")
 	flagRepo         = flag.String("repo", "drbd-9", "Repository to use")
-	flagDists        = flag.String("dist", "rhel7,rhel8", "Distributions")
+	flagDists        = flag.String("dist", "rhel7,rhel8,rhel9", "Distributions")
 	flagFetch        = flag.Duration("fetch", 20*time.Minute, "Package DB fetch interval")
 	flagMaxBytesBody = flag.Int("maxbytesbody", 250*1024, "Maximum nunber of bytes in the body")
 	flagCertFile     = flag.String("certfile", "", "Path to a TLS cert file")

@@ -1,6 +1,7 @@
 package repos
 
 import (
+	"context"
 	"encoding/json"
 	"net/http"
 	"time"
@@ -34,9 +35,13 @@ type Repos struct {
 	} `json:"content"`
 }
 
-func Get(pkgUrl string) (Repos, error) {
+func Get(ctx context.Context, pkgUrl string) (Repos, error) {
 	var repoinfo Repos
-	r, err := http.Get(pkgUrl)
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, pkgUrl, nil)
+	if err != nil {
+		return repoinfo, err
+	}
+	r, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return repoinfo, err
 	}

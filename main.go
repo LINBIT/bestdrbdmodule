@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"context"
 	"crypto/sha256"
 	"flag"
 	"fmt"
@@ -235,7 +236,7 @@ func (s *server) bestKmod() http.HandlerFunc {
 }
 
 func (s *server) updateKmps(repo, dists string) {
-	repoInfo, err := repos.Get(pkgUrl)
+	repoInfo, err := repos.Get(context.Background(), pkgUrl)
 	if err != nil { // not fatal, we just can not offer anything
 		s.logger.Info("Could not fetch repo info: " + err.Error())
 	}

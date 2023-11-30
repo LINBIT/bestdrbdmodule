@@ -1,4 +1,4 @@
-package main
+package repos
 
 import (
 	"encoding/json"
@@ -23,7 +23,7 @@ type Distribution struct {
 	Drbd90 Repo   `json:"drbd-9.0"`
 }
 
-type repos struct {
+type Repos struct {
 	About struct {
 		Created time.Time `json:"created"`
 	} `json:"about"`
@@ -34,8 +34,8 @@ type repos struct {
 	} `json:"content"`
 }
 
-func getRepos(pkgUrl string) (repos, error) {
-	var repoinfo repos
+func Get(pkgUrl string) (Repos, error) {
+	var repoinfo Repos
 	r, err := http.Get(pkgUrl)
 	if err != nil {
 		return repoinfo, err
@@ -48,7 +48,7 @@ func getRepos(pkgUrl string) (repos, error) {
 	return repoinfo, nil
 }
 
-func (rs *repos) getKmps(repo, dist, arch string) []string {
+func (rs *Repos) GetKmps(repo, dist, arch string) []string {
 	var d Distribution
 	switch dist {
 	case "rhel7":

@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"flag"
 	"fmt"
+	"github.com/LINBIT/bestdrbdmodule/pkg/repos"
 	"log"
 	"net/http"
 	"os"
@@ -234,13 +235,13 @@ func (s *server) bestKmod() http.HandlerFunc {
 }
 
 func (s *server) updateKmps(repo, dists string) {
-	repoInfo, err := getRepos(pkgUrl)
+	repoInfo, err := repos.Get(pkgUrl)
 	if err != nil { // not fatal, we just can not offer anything
 		s.logger.Info("Could not fetch repo info: " + err.Error())
 	}
 
 	for _, d := range strings.Split(dists, ",") {
-		kmps := repoInfo.getKmps(repo, d, "amd64")
+		kmps := repoInfo.GetKmps(repo, d, "amd64")
 		if len(kmps) == 0 {
 			continue
 		}

@@ -288,12 +288,6 @@ func (s *server) _setKmodCache(dist string, hSum [32]byte, value string) {
 	s.kmodCache[dist][hSum] = value
 }
 
-// func (s *server) setKmodCache(dist string, hSum [32]byte, value string) {
-// s.m.Lock()
-// s._setKmodCache(dist, hSum, value)
-// s.m.Unlock()
-// }
-
 func (s *server) errorf(code int, remoteAddr string, w http.ResponseWriter, format string, a ...interface{}) {
 	w.WriteHeader(code)
 	_, _ = fmt.Fprintf(w, format, a...)

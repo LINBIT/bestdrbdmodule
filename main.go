@@ -6,14 +6,16 @@ import (
 	"crypto/sha256"
 	"flag"
 	"fmt"
-	"github.com/LINBIT/bestdrbdmodule/pkg/repos"
 	"log"
 	"net/http"
 	"os"
 	"os/exec"
+	"strconv"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/LINBIT/bestdrbdmodule/pkg/repos"
 
 	"github.com/gorilla/mux"
 	"go.uber.org/zap"
@@ -130,7 +132,7 @@ func (s *server) bestKmod() http.HandlerFunc {
 			s.errorf(http.StatusInternalServerError, r.RemoteAddr, w, "Could not hash input line")
 			return
 		}
-		dist, major := "", ""
+		dist, major := "", -1
 		scanner := bufio.NewScanner(r.Body)
 		for scanner.Scan() {
 			text := scanner.Text()
@@ -160,7 +162,12 @@ func (s *server) bestKmod() http.HandlerFunc {
 				if len(majorminor) == 0 {
 					continue
 				}
-				major = majorminor[0]
+				var err error
+				major, err = strconv.Atoi(majorminor[0])
+				if err != nil {
+					major = -1
+					continue
+				}
 			}
 		}
 		if err := scanner.Err(); err != nil {
@@ -178,12 +185,12 @@ func (s *server) bestKmod() http.HandlerFunc {
 			s.errorf(http.StatusBadRequest, r.RemoteAddr, w, "Could not determine distribution from os-release")
 			return
 		}
-		if major == "" {
+		if major == -1 {
 			s.errorf(http.StatusBadRequest, r.RemoteAddr, w, "Could not determine major release from os-release")
 			return
 		}
 
-		dist = dist + major
+		dist = fmt.Sprintf("%s%d", dist, major)
 		if hit, ok := s.getKmodCache(dist, hSum); ok {
 			s.logger.Info("Cache hit for: " + hit)
 			if _, err := fmt.Fprint(w, hit); err != nil {

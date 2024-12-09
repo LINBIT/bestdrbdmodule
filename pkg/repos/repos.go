@@ -29,9 +29,10 @@ type Repos struct {
 		Created time.Time `json:"created"`
 	} `json:"about"`
 	Content struct {
-		Rhel7 Distribution `json:"rhel7"`
-		Rhel8 Distribution `json:"rhel8"`
-		Rhel9 Distribution `json:"rhel9"`
+		Rhel7  Distribution `json:"rhel7"`
+		Rhel8  Distribution `json:"rhel8"`
+		Rhel9  Distribution `json:"rhel9"`
+		Rhel10 Distribution `json:"rhel10"`
 	} `json:"content"`
 }
 
@@ -62,6 +63,8 @@ func (rs *Repos) GetKmps(repo, dist, arch string) []string {
 		d = rs.Content.Rhel8
 	case "rhel9":
 		d = rs.Content.Rhel9
+	case "rhel10":
+		d = rs.Content.Rhel10
 	default:
 		return []string{}
 	}

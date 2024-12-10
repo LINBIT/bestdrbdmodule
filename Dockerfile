@@ -4,12 +4,9 @@ WORKDIR /go/src/bestdrbdmodule
 COPY . .
 RUN make && mv ./bestdrbdmodule /
 
-FROM ubuntu:focal
+FROM python:3
 COPY --from=builder /bestdrbdmodule /sbin
-RUN apt-get update && \
-	apt-get install -y python3-pip && \
-	pip3 install https://github.com/LINBIT/python-lbdist/archive/master.tar.gz && \
-	apt-get -y clean
+RUN pip3 install https://github.com/LINBIT/python-lbdist/archive/master.tar.gz
 
 EXPOSE 3030
 CMD ["-addr", ":3030"]

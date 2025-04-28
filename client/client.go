@@ -2,7 +2,7 @@ package client
 
 import (
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"net/url"
 	"os"
@@ -87,7 +87,12 @@ func (c *Client) BestKmod(unameR string) (string, error) {
 	}
 	defer resp.Body.Close()
 
-	bytes, err := ioutil.ReadAll(resp.Body)
+	if resp.StatusCode != http.StatusOK {
+		bodyBytes, _ := io.ReadAll(resp.Body)
+		return "", fmt.Errorf("API call failed (HTTP %d): %s", resp.StatusCode, string(bodyBytes))
+	}
+
+	bytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return "", fmt.Errorf("failed to read from response body: %w", err)
 	}
